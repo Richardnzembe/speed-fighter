@@ -1,0 +1,43 @@
+{
+  "name": "Speed Fighter",
+  "short_name": "SpeedFighter",
+  "description": "Professional speed fighting game with vector graphics. Fight through waves of enemies and defeat powerful bosses!",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "scope": "/",
+  "theme_color": "#0c0c2e",
+  "background_color": "#0c0c2e",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["game", "entertainment", "action"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Start New Game",
+      "short_name": "Play",
+      "description": "Start a new fight",
+      "url": "/?action=play"
+    },
+    {
+      "name": "Upgrades Store",
+      "short_name": "Store",
+      "description": "View and purchase upgrades",
+      "url": "/?action=store"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Speed Fighter | by Richard Nzembe</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0c0c2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Speed Fighter">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- iOS Icons -->
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* [Keep all your existing CSS exactly as is - it's already optimized for full-screen landscape] */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #0c0c2e, #1a1a3e);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            touch-action: manipulation;
+            padding: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* [Rest of your CSS remains EXACTLY the same - no changes] */
+        /* ... All your existing CSS ... */
+        
+    </style>
+</head>
+<body>
+    <!-- Your entire game HTML structure remains exactly the same -->
+    <!-- [Keep all your existing HTML exactly as is] -->
+    
+    <div id="gameContainer">
+        <!-- Header (full width) -->
+        <div class="header">
+            <div class="logo">SPEED FIGHTER</div>
+            <div class="score-container">
+                <div class="score-box">
+                    <div class="score-label">SCORE</div>
+                    <div id="score" class="score-value">0</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-label">HIGH SCORE</div>
+                    <div id="highScore" class="score-value">0</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-label">LEVEL</div>
+                    <div id="levelDisplay" class="score-value">1</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-label">BOSS HP</div>
+                    <div id="bossHealthDisplay" class="score-value">-</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- [Rest of your HTML remains exactly the same] -->
+        <!-- ... All your existing HTML ... -->
+        
+    </div>
+
+    <!-- Service Worker Registration -->
+    <script src="sw-register.js"></script>
+    
+    <!-- Your existing game JavaScript -->
+    <script>
+        // [Keep all your existing JavaScript exactly as is]
+        // ... All your existing JavaScript code ...
+    </script>
+</body>
+</html>
