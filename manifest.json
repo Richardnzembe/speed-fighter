@@ -1,13 +1,13 @@
 {
-  "name": "My PWA Game",
-  "short_name": "Game",
-  "description": "An offline HTML5 action game built for mobile.",
-  "start_url": "/my_pwa_game/index.html",
+  "name": "Speed Fighter",
+  "short_name": "SpeedFighter",
+  "description": "Fast-paced HTML5 action game built for mobile.",
+  "start_url": "/speed-fighter/index.html",
+  "scope": "/speed-fighter/",
   "display": "standalone",
-  "orientation": "portrait",
-  "scope": "/my_pwa_game/",
-  "theme_color": "#000000",
-  "background_color": "#000000",
+  "orientation": "landscape",
+  "theme_color": "#0a0a1a",
+  "background_color": "#0a0a1a",
   "icons": [
     {
       "src": "icons/icon-192.png",
@@ -22,7 +22,7 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["games"],
+  "categories": ["games", "entertainment"],
   "lang": "en",
   "dir": "ltr",
   "prefer_related_applications": false
