@@ -34,13 +34,14 @@
             -webkit-overflow-scrolling: touch;
             height: 100vh;
             width: 100vw;
+            position: fixed;
         }
         
         #gameContainer {
             width: 100%;
             max-width: 1400px;
-            height: 100vh;
-            max-height: 1000px;
+            height: 100%;
+            max-height: 100vh;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -48,6 +49,7 @@
             box-shadow: 0 0 50px rgba(0, 150, 255, 0.3);
             border-radius: 10px;
             overflow: hidden;
+            aspect-ratio: 16/9;
         }
         
         /* Header - spans full width */
@@ -65,7 +67,7 @@
         }
         
         .logo {
-            font-size: 1.3rem;
+            font-size: clamp(1rem, 2vw, 1.3rem);
             font-weight: 800;
             background: linear-gradient(90deg, #00ccff, #0088ff);
             -webkit-background-clip: text;
@@ -96,13 +98,13 @@
         }
         
         .score-label {
-            font-size: 0.7rem;
+            font-size: clamp(0.6rem, 1vw, 0.7rem);
             color: #aaddff;
             margin-bottom: 3px;
         }
         
         .score-value {
-            font-size: 1.1rem;
+            font-size: clamp(0.9rem, 1.2vw, 1.1rem);
             font-weight: 700;
             color: #00ffaa;
         }
@@ -113,6 +115,7 @@
             flex: 1;
             width: 100%;
             position: relative;
+            min-height: 0;
         }
         
         /* Left Board - for joystick (DESKTOP ONLY) */
@@ -132,6 +135,9 @@
             flex: 1;
             position: relative;
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         #gameCanvas {
@@ -140,6 +146,13 @@
             background: radial-gradient(circle at center, #0f0f25 0%, #080815 100%);
             cursor: crosshair;
             touch-action: none;
+            object-fit: contain;
+        }
+        
+        .canvas-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
         }
         
         /* Right Board - for action buttons (DESKTOP ONLY) */
@@ -499,7 +512,7 @@
         }
         
         .screen h1 {
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 5vw, 2.5rem);
             margin-bottom: 10px;
             background: linear-gradient(90deg, #00ccff, #ff00cc);
             -webkit-background-clip: text;
@@ -509,13 +522,13 @@
         }
         
         .screen h2 {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
             margin-bottom: 20px;
             color: #00ffaa;
         }
         
         .screen p {
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 2vw, 1rem);
             max-width: 600px;
             margin-bottom: 20px;
             color: #aaddff;
@@ -524,7 +537,7 @@
         
         .btn {
             padding: 12px 30px;
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 2vw, 1.1rem);
             font-weight: 700;
             background: linear-gradient(90deg, #0088ff, #00ccff);
             color: white;
@@ -534,7 +547,7 @@
             margin: 8px;
             transition: all 0.3s;
             box-shadow: 0 5px 20px rgba(0, 136, 255, 0.5);
-            width: 200px;
+            width: min(200px, 90%);
             max-width: 90%;
         }
         
@@ -557,7 +570,7 @@
             display: flex;
             justify-content: space-between;
             margin: 8px 0;
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 2vw, 1rem);
         }
         
         .store {
@@ -591,17 +604,17 @@
         .upgrade-info h3 {
             color: #00ffaa;
             margin-bottom: 5px;
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 2vw, 1rem);
         }
         
         .upgrade-info p {
-            font-size: 0.8rem;
+            font-size: clamp(0.7rem, 1.5vw, 0.8rem);
             margin: 0;
             color: #aaddff;
         }
         
         .upgrade-cost {
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 2vw, 1.1rem);
             font-weight: 700;
             color: #ffcc00;
             white-space: nowrap;
@@ -645,26 +658,12 @@
         
         /* Force landscape for mobile */
         @media (orientation: portrait) and (max-width: 768px) {
-            body {
-                overflow: hidden;
+            #orientationWarning {
+                display: flex;
             }
             
             #gameContainer {
-                transform: rotate(90deg);
-                transform-origin: center center;
-                width: 100vh;
-                height: 100vw;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) rotate(90deg);
-                max-width: none;
-                max-height: none;
-                border-radius: 0;
-            }
-            
-            .mobile-controls {
-                bottom: 50px;
+                display: none;
             }
         }
         
@@ -705,11 +704,15 @@
         /* For mobile devices - hide side panels, show mobile overlay */
         @media (max-width: 768px) {
             .left-board, .right-board {
-                display: none !important; /* FORCE HIDE on mobile */
+                display: none;
             }
             
-            .mobile-controls, .mobile-top-controls {
-                display: flex !important; /* FORCE SHOW on mobile */
+            .mobile-controls {
+                display: flex;
+            }
+            
+            .mobile-top-controls {
+                display: flex;
             }
             
             .header {
@@ -736,21 +739,46 @@
             
             .in-game-boss-health {
                 top: 60px;
-                width: 250px;
+                width: min(250px, 80%);
+            }
+            
+            .mobile-joystick-area {
+                width: clamp(120px, 20vw, 160px);
+                height: clamp(120px, 20vw, 160px);
+                bottom: clamp(20px, 5vh, 40px);
+                left: clamp(20px, 5vw, 40px);
+            }
+            
+            .mobile-action-buttons {
+                bottom: clamp(20px, 5vh, 40px);
+                right: clamp(20px, 5vw, 40px);
+                gap: clamp(10px, 2vh, 20px);
+            }
+            
+            .mobile-action-btn {
+                width: clamp(70px, 15vw, 90px);
+                height: clamp(70px, 15vw, 90px);
+                font-size: clamp(1.5rem, 4vw, 2rem);
+            }
+            
+            .mobile-top-btn {
+                width: clamp(55px, 12vw, 75px);
+                height: clamp(55px, 12vw, 75px);
+                font-size: clamp(1.5rem, 4vw, 1.8rem);
             }
             
             /* Landscape optimization */
             @media (orientation: landscape) {
                 .mobile-controls {
-                    height: 150px;
+                    height: clamp(120px, 25vh, 200px);
                     bottom: 10px;
                 }
                 
                 .mobile-joystick-area {
                     bottom: 20px;
                     left: 20px;
-                    width: 140px;
-                    height: 140px;
+                    width: clamp(100px, 15vw, 140px);
+                    height: clamp(100px, 15vw, 140px);
                 }
                 
                 .mobile-action-buttons {
@@ -760,9 +788,9 @@
                 }
                 
                 .mobile-action-btn {
-                    width: 80px;
-                    height: 80px;
-                    font-size: 1.8rem;
+                    width: clamp(60px, 12vw, 80px);
+                    height: clamp(60px, 12vw, 80px);
+                    font-size: clamp(1.5rem, 3vw, 1.8rem);
                 }
                 
                 .mobile-top-controls {
@@ -771,9 +799,9 @@
                 }
                 
                 .mobile-top-btn {
-                    width: 65px;
-                    height: 65px;
-                    font-size: 1.6rem;
+                    width: clamp(50px, 10vw, 65px);
+                    height: clamp(50px, 10vw, 65px);
+                    font-size: clamp(1.4rem, 3vw, 1.6rem);
                 }
                 
                 .header {
@@ -783,38 +811,40 @@
                 
                 .in-game-boss-health {
                     top: 45px;
-                    width: 200px;
+                    width: min(200px, 70%);
                 }
             }
         }
         
         /* Very small screens */
-        @media (max-height: 600px) {
+        @media (max-height: 600px) and (orientation: landscape) {
             .mobile-controls {
-                height: 150px;
+                height: clamp(100px, 20vh, 150px);
             }
             
             .mobile-joystick-area {
-                width: 140px;
-                height: 140px;
-                bottom: 20px;
-                left: 20px;
+                width: clamp(100px, 15vw, 140px);
+                height: clamp(100px, 15vw, 140px);
+                bottom: clamp(10px, 2vh, 20px);
+                left: clamp(10px, 2vw, 20px);
             }
             
             .mobile-action-buttons {
-                bottom: 20px;
-                right: 20px;
+                bottom: clamp(10px, 2vh, 20px);
+                right: clamp(10px, 2vw, 20px);
+                gap: clamp(8px, 1.5vh, 15px);
             }
             
             .mobile-action-btn {
-                width: 80px;
-                height: 80px;
-                font-size: 1.8rem;
+                width: clamp(60px, 12vw, 80px);
+                height: clamp(60px, 12vw, 80px);
+                font-size: clamp(1.4rem, 3vw, 1.8rem);
             }
             
             .mobile-top-btn {
-                width: 65px;
-                height: 65px;
+                width: clamp(45px, 9vw, 65px);
+                height: clamp(45px, 9vw, 65px);
+                font-size: clamp(1.3rem, 2.5vw, 1.6rem);
             }
         }
         
@@ -880,6 +910,24 @@
             display: none;
             box-shadow: 0 4px 15px rgba(255, 51, 0, 0.5);
         }
+        
+        /* Instructions PC Controls - REMOVED */
+        /* This was causing display issues with the upper board */
+        
+        .controls-explanation {
+            background: rgba(0, 40, 80, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .controls-explanation p {
+            margin: 5px 0;
+            text-align: left;
+            font-size: 0.95rem;
+        }
     </style>
 </head>
 <body>
@@ -932,7 +980,9 @@
             
             <!-- Center Game Canvas -->
             <div class="game-center">
-                <canvas id="gameCanvas"></canvas>
+                <div class="canvas-container">
+                    <canvas id="gameCanvas"></canvas>
+                </div>
                 
                 <!-- In-game Boss Health Bar -->
                 <div class="in-game-boss-health">
@@ -1096,19 +1146,29 @@
         <!-- Instructions Screen -->
         <div id="instructionsScreen" class="screen" style="display: none;">
             <h1>HOW TO PLAY</h1>
-            <div class="game-over-stats">
-                <div style="flex-direction: column; align-items: flex-start;">
-                    <p><strong>Controls:</strong></p>
-                    <p><i class="fas fa-arrows-alt" style="color: #00aaff;"></i> <strong>Move:</strong> Drag the joystick to move your fighter</p>
-                    <p><i class="fas fa-crosshairs" style="color: #ff3300;"></i> <strong>Shoot:</strong> Red button fires rapid bullets</p>
-                    <p><i class="fas fa-fire" style="color: #ffaa00;"></i> <strong>Fire Attack:</strong> Yellow button for area damage (cooldown: 6s)</p>
-                    <p><i class="fas fa-bolt" style="color: #00cc88;"></i> <strong>Dash:</strong> Green button for quick dash (cooldown: 3s)</p>
-                    <p><i class="fas fa-heart" style="color: #ff0066;"></i> <strong>Health:</strong> Avoid enemies and collect health orbs</p>
-                    <p><i class="fas fa-crown" style="color: #ffcc00;"></i> <strong>Boss Fights:</strong> Defeat the boss at the end of each level</p>
-                    <p><i class="fas fa-running" style="color: #00ccff;"></i> <strong>Enemy AI:</strong> Enemies run away when you shoot near them!</p>
-                    <p><i class="fas fa-pause" style="color: #ffaa00;"></i> <strong>Pause:</strong> Tap the pause button during gameplay to pause</p>
-                </div>
+            <div class="controls-explanation">
+                <p><strong style="color:#00aaff;">MOBILE CONTROLS:</strong></p>
+                <p>• <strong>Move:</strong> Drag the joystick to move your fighter</p>
+                <p>• <strong>Shoot:</strong> Red button fires rapid bullets</p>
+                <p>• <strong>Fire Attack:</strong> Yellow button for area damage (cooldown: 6s)</p>
+                <p>• <strong>Dash:</strong> Green button for quick dash (cooldown: 3s)</p>
+                
+                <p><strong style="color:#00aaff; margin-top:15px; display:block;">PC CONTROLS:</strong></p>
+                <p>• <strong>Move:</strong> Arrow Keys ONLY (↑ ↓ ← →)</p>
+                <p>• <strong>Shoot:</strong> X key, SPACEBAR, or Left Click</p>
+                <p>• <strong>Special Attack:</strong> S key (cooldown: 6s)</p>
+                <p>• <strong>Dash:</strong> D key (cooldown: 3s)</p>
+                <p>• <strong>Pause:</strong> P key or ESC</p>
+                
+                <p><strong style="color:#00aaff; margin-top:15px; display:block;">GAMEPLAY:</strong></p>
+                <p>• <strong>Health:</strong> Avoid enemies and collect health orbs</p>
+                <p>• <strong>Boss Fights:</strong> Defeat the boss at the end of each level</p>
+                <p>• <strong>Enemy AI:</strong> Enemies run away when you shoot near them!</p>
+                <p>• <strong>Upgrades:</strong> Use points to make your fighter stronger</p>
             </div>
+            
+            <!-- PC Controls Board REMOVED - Was causing display issues -->
+            
             <button id="backFromInstructionsBtn" class="btn">BACK TO MENU</button>
         </div>
         
@@ -1145,7 +1205,7 @@
                 <h2>Please Rotate Your Device</h2>
                 <p>For the best gaming experience, please play in landscape mode.</p>
                 <p>If you're on a phone, rotate it sideways.</p>
-                <button id="ignoreOrientationBtn" class="btn" style="margin-top: 20px;">OK, Continue</button>
+                <button id="ignoreOrientationBtn" class="btn" style="margin-top: 20px;">Play Anyway (Not Recommended)</button>
             </div>
         </div>
     </div>
@@ -1201,7 +1261,7 @@
         }
     </script>
 
-    <!-- Game Script (Original Game Code - Unchanged) -->
+    <!-- Game Script (Updated for Keyboard Controls) -->
     <script>
         // Game state
         const gameState = {
@@ -1235,7 +1295,7 @@
             joystickCurrentY: 0
         };
 
-        // Check if mobile - IMPROVED VERSION
+        // Check if mobile - SIMPLIFIED VERSION
         function checkIfMobile() {
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -1243,23 +1303,19 @@
             
             gameState.isMobile = isMobile || isTouch || isSmallScreen;
             
-            // Update display based on device - THIS IS CRITICAL!
+            // Update UI based on device
             if (gameState.isMobile) {
-                // HIDE desktop controls
-                document.querySelectorAll('.left-board, .right-board').forEach(el => {
-                    el.style.display = 'none';
-                });
-                // SHOW mobile controls
+                // Show mobile controls, hide desktop controls
                 document.querySelector('.mobile-controls').style.display = 'flex';
                 document.querySelector('.mobile-top-controls').style.display = 'flex';
+                document.querySelector('.left-board').style.display = 'none';
+                document.querySelector('.right-board').style.display = 'none';
             } else {
-                // SHOW desktop controls
-                document.querySelectorAll('.left-board, .right-board').forEach(el => {
-                    el.style.display = 'flex';
-                });
-                // HIDE mobile controls
+                // Show desktop controls, hide mobile controls
                 document.querySelector('.mobile-controls').style.display = 'none';
                 document.querySelector('.mobile-top-controls').style.display = 'none';
+                document.querySelector('.left-board').style.display = 'flex';
+                document.querySelector('.right-board').style.display = 'flex';
             }
             
             return gameState.isMobile;
@@ -1340,7 +1396,7 @@
         // Upgrade store
         const upgradeItems = document.querySelectorAll('.upgrade-item');
 
-        // Game objects - UPDATED player size for better proportions
+        // Game objects
         const player = {
             x: 0,
             y: 0,
@@ -1386,13 +1442,24 @@
         let gainNode = null;
         let audioInitialized = false;
 
-        // Initialize canvas size - Set to 1280x720 internally
+        // Initialize canvas size - Dynamic scaling
         function initCanvas() {
             const gameCenter = document.querySelector('.game-center');
+            const containerWidth = gameCenter.clientWidth;
+            const containerHeight = gameCenter.clientHeight;
             
-            // Set internal resolution to 1280x720
-            gameCanvas.width = 1280;
-            gameCanvas.height = 720;
+            // Set internal resolution but maintain aspect ratio
+            const targetAspectRatio = 16/9;
+            let canvasWidth = containerWidth;
+            let canvasHeight = containerWidth / targetAspectRatio;
+            
+            if (canvasHeight > containerHeight) {
+                canvasHeight = containerHeight;
+                canvasWidth = containerHeight * targetAspectRatio;
+            }
+            
+            gameCanvas.width = canvasWidth;
+            gameCanvas.height = canvasHeight;
             
             // Center player initially
             player.x = gameCanvas.width / 2;
@@ -1408,8 +1475,10 @@
             
             if (isMobile && isPortrait && gameState.screen === 'playing') {
                 orientationWarning.style.display = 'flex';
+                document.getElementById('gameContainer').style.display = 'none';
             } else {
                 orientationWarning.style.display = 'none';
+                document.getElementById('gameContainer').style.display = 'flex';
             }
         }
 
@@ -1466,40 +1535,17 @@
             } catch (e) {}
         }
 
-        // Initialize joystick - FIXED for mobile/desktop
+        // Initialize joystick - SIMPLIFIED
         function initJoystick(joystickBaseElement, joystickHandleElement, isMobile = false) {
             if (!joystickBaseElement || !joystickHandleElement) return;
             
-            let joystickArea = joystickBaseElement.parentElement;
-            
-            // For mobile, use the mobile joystick area
-            if (isMobile) {
-                const mobileArea = document.querySelector('.mobile-joystick-area');
-                if (mobileArea) {
-                    joystickArea = mobileArea;
-                }
-            }
+            let joystickArea = isMobile ? 
+                document.querySelector('.mobile-joystick-area') : 
+                document.querySelector('.left-board .joystick-area');
             
             if (!joystickArea) return;
             
-            // Make sure joystick area is properly set up for touch
-            if (isMobile) {
-                joystickArea.style.touchAction = 'none';
-                joystickArea.style.pointerEvents = 'auto';
-                
-                if (joystickBaseElement) {
-                    joystickBaseElement.style.touchAction = 'none';
-                    joystickBaseElement.style.pointerEvents = 'auto';
-                }
-                
-                if (joystickHandleElement) {
-                    joystickHandleElement.style.touchAction = 'none';
-                    joystickHandleElement.style.pointerEvents = 'auto';
-                }
-            }
-            
             function getJoystickBaseRect() {
-                // Get the position of the joystick area
                 const rect = joystickArea.getBoundingClientRect();
                 return {
                     left: rect.left,
@@ -1576,11 +1622,8 @@
             
             // Touch events for mobile
             if (isMobile) {
-                // Add touch events to the joystick area
                 joystickArea.addEventListener('touchstart', function(e) {
                     e.preventDefault();
-                    e.stopPropagation();
-                    
                     if (e.touches.length > 0) {
                         const touch = e.touches[0];
                         startJoystick(touch.clientX, touch.clientY);
@@ -1589,8 +1632,6 @@
                 
                 joystickArea.addEventListener('touchmove', function(e) {
                     e.preventDefault();
-                    e.stopPropagation();
-                    
                     if (gameState.joystickTouching && e.touches.length > 0) {
                         const touch = e.touches[0];
                         moveJoystick(touch.clientX, touch.clientY);
@@ -1606,19 +1647,6 @@
                     e.preventDefault();
                     endJoystick();
                 }, { passive: false });
-                
-                // Also add touch events to the handle for better responsiveness
-                if (joystickHandleElement) {
-                    joystickHandleElement.addEventListener('touchstart', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        if (e.touches.length > 0) {
-                            const touch = e.touches[0];
-                            startJoystick(touch.clientX, touch.clientY);
-                        }
-                    }, { passive: false });
-                }
             } else {
                 // Mouse events for desktop
                 joystickArea.addEventListener('mousedown', (e) => {
@@ -2946,7 +2974,7 @@
 
         // Initialize game
         function init() {
-            checkIfMobile(); // This will show/hide controls based on device
+            checkIfMobile();
             initCanvas();
             
             const initAudioOnInteraction = () => {
@@ -2960,7 +2988,7 @@
             
             highScoreElement.textContent = gameState.highScore;
             
-            // Initialize joysticks - ONLY ONE based on device
+            // Initialize joysticks based on device
             if (gameState.isMobile) {
                 // Initialize MOBILE joystick only
                 if (mobileJoystickBase && mobileJoystickHandle) {
@@ -3024,6 +3052,7 @@
             
             ignoreOrientationBtn.addEventListener('click', () => {
                 orientationWarning.style.display = 'none';
+                document.getElementById('gameContainer').style.display = 'flex';
             });
             
             // Pause button event listeners - BOTH desktop and mobile
@@ -3073,6 +3102,13 @@
                 shootBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     if (gameState.screen === 'playing' && !gameState.paused) {
+                        shoot();
+                    }
+                });
+                
+                // Add click listener for PC
+                gameCanvas.addEventListener('click', (e) => {
+                    if (gameState.screen === 'playing' && !gameState.paused && !gameState.isMobile) {
                         shoot();
                     }
                 });
@@ -3159,57 +3195,78 @@
                 mobileSoundToggle.addEventListener('click', toggleSound);
             }
             
-            // Keyboard controls for desktop
+            // Keyboard controls for desktop - FIXED VERSION
+            // Only arrow keys for movement, D for dash, S for special attack
+            const keysPressed = {};
+            
             document.addEventListener('keydown', (e) => {
                 if (gameState.screen !== 'playing' || gameState.paused) return;
                 
-                switch(e.key) {
-                    case 'ArrowLeft':
-                        joystickVector.x = -1;
-                        break;
-                    case 'ArrowRight':
-                        joystickVector.x = 1;
-                        break;
-                    case 'ArrowUp':
-                        joystickVector.y = -1;
-                        break;
-                    case 'ArrowDown':
-                        joystickVector.y = 1;
-                        break;
-                    case ' ':
-                        shoot();
-                        break;
-                    case 's':
-                    case 'S':
-                        specialAttack();
-                        break;
-                    case 'd':
-                    case 'D':
-                        dash();
-                        break;
-                    case 'p':
-                    case 'P':
-                    case 'Escape':
-                        if (gameState.screen === 'playing') {
-                            if (gameState.paused) {
-                                resumeGame();
-                            } else {
-                                pauseGame();
-                            }
+                keysPressed[e.key.toLowerCase()] = true;
+                
+                // Movement keys - ONLY ARROW KEYS
+                if (e.key === 'ArrowLeft') {
+                    joystickVector.x = -1;
+                } else if (e.key === 'ArrowRight') {
+                    joystickVector.x = 1;
+                } else if (e.key === 'ArrowUp') {
+                    joystickVector.y = -1;
+                } else if (e.key === 'ArrowDown') {
+                    joystickVector.y = 1;
+                }
+                
+                // Action keys - no movement conflicts
+                if (e.key === 'x' || e.key === 'X' || e.key === ' ') {
+                    shoot();
+                }
+                
+                // Special attack (S key) - ONLY for special attack
+                if (e.key === 's' || e.key === 'S') {
+                    specialAttack();
+                }
+                
+                // Dash (D key) - ONLY for dash
+                if (e.key === 'd' || e.key === 'D') {
+                    dash();
+                }
+                
+                // Pause
+                if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') {
+                    if (gameState.screen === 'playing') {
+                        if (gameState.paused) {
+                            resumeGame();
+                        } else {
+                            pauseGame();
                         }
-                        break;
+                    }
                 }
             });
             
             document.addEventListener('keyup', (e) => {
-                switch(e.key) {
-                    case 'ArrowLeft':
-                    case 'ArrowRight':
-                        joystickVector.x = 0;
+                const key = e.key.toLowerCase();
+                delete keysPressed[key];
+                
+                // Reset movement for arrow keys ONLY
+                switch(key) {
+                    case 'arrowleft':
+                        if (!keysPressed['arrowright']) {
+                            joystickVector.x = 0;
+                        }
                         break;
-                    case 'ArrowUp':
-                    case 'ArrowDown':
-                        joystickVector.y = 0;
+                    case 'arrowright':
+                        if (!keysPressed['arrowleft']) {
+                            joystickVector.x = 0;
+                        }
+                        break;
+                    case 'arrowup':
+                        if (!keysPressed['arrowdown']) {
+                            joystickVector.y = 0;
+                        }
+                        break;
+                    case 'arrowdown':
+                        if (!keysPressed['arrowup']) {
+                            joystickVector.y = 0;
+                        }
                         break;
                 }
             });
@@ -3246,13 +3303,13 @@
             
             // Handle window resize and orientation change
             window.addEventListener('resize', () => {
-                checkIfMobile(); // Re-check and update controls display
+                checkIfMobile();
                 initCanvas();
             });
             
             window.addEventListener('orientationchange', () => {
                 setTimeout(() => {
-                    checkIfMobile(); // Re-check and update controls display
+                    checkIfMobile();
                     initCanvas();
                     checkOrientation();
                 }, 300);
