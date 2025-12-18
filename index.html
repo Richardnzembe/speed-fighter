@@ -116,6 +116,7 @@
             width: 100%;
             position: relative;
             min-height: 0;
+            overflow: hidden;
         }
         
         /* Left Board - for joystick (DESKTOP ONLY) */
@@ -128,6 +129,7 @@
             align-items: center;
             padding: 20px;
             z-index: 5;
+            flex-shrink: 0;
         }
         
         /* Center Game Canvas */
@@ -138,6 +140,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            min-width: 0;
+            min-height: 0;
         }
         
         #gameCanvas {
@@ -146,13 +150,16 @@
             background: radial-gradient(circle at center, #0f0f25 0%, #080815 100%);
             cursor: crosshair;
             touch-action: none;
-            object-fit: contain;
+            display: block;
         }
         
         .canvas-container {
             width: 100%;
             height: 100%;
             position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         /* Right Board - for action buttons (DESKTOP ONLY) */
@@ -167,6 +174,7 @@
             padding: 20px;
             z-index: 5;
             gap: 20px;
+            flex-shrink: 0;
         }
         
         /* Improved Joystick - Fixed sizing */
@@ -1470,120 +1478,11 @@
             joystickStartX: 0,
             joystickStartY: 0,
             joystickCurrentX: 0,
-            joystickCurrentY: 0
+            joystickCurrentY: 0,
+            canvasScale: 1,
+            canvasOffsetX: 0,
+            canvasOffsetY: 0
         };
-
-        // Enhanced mobile detection with screen size check
-        function checkIfMobile() {
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-            const screenWidth = window.innerWidth;
-            const screenHeight = window.innerHeight;
-            
-            // Better tablet detection
-            const isiPad = /iPad/.test(navigator.userAgent) || 
-                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-            const isTablet = isiPad || 
-                           (screenWidth >= 600 && screenHeight >= 600 && isTouch) ||
-                           (screenWidth >= 768 && isTouch);
-            
-            // Calculate screen diagonal
-            const screenDiagonal = Math.sqrt(screenWidth * screenWidth + screenHeight * screenHeight) / 96;
-            
-            // Consider phones and tablets with screen diagonal less than 15 inches as mobile
-            const isSmallDevice = screenDiagonal < 15;
-            
-            // Tablet-specific detection
-            gameState.isTablet = isTablet && screenDiagonal >= 7 && screenDiagonal < 15;
-            
-            // Mobile if it's a mobile device, touch device, small screen, small device, OR tablet
-            gameState.isMobile = (isMobile || isTouch || isTablet || screenWidth <= 1024 || isSmallDevice);
-            
-            // Update UI based on device
-            if (gameState.isMobile) {
-                // Show mobile controls, hide desktop controls
-                document.querySelector('.mobile-controls').style.display = 'flex';
-                document.querySelector('.mobile-top-controls').style.display = 'flex';
-                document.querySelector('.left-board').style.display = 'none';
-                document.querySelector('.right-board').style.display = 'none';
-                
-                // Tablet-specific adjustments
-                if (gameState.isTablet) {
-                    // Make controls larger for tablets
-                    document.querySelector('.mobile-controls').style.height = '250px';
-                    document.querySelector('.mobile-joystick-area').style.width = '180px';
-                    document.querySelector('.mobile-joystick-area').style.height = '180px';
-                    document.querySelector('.mobile-joystick-area').style.bottom = '50px';
-                    document.querySelector('.mobile-joystick-area').style.left = '50px';
-                    
-                    const mobileActionBtns = document.querySelectorAll('.mobile-action-btn');
-                    mobileActionBtns.forEach(btn => {
-                        btn.style.width = '100px';
-                        btn.style.height = '100px';
-                        btn.style.fontSize = '2.2rem';
-                    });
-                    
-                    document.querySelector('.mobile-action-buttons').style.bottom = '50px';
-                    document.querySelector('.mobile-action-buttons').style.right = '50px';
-                    document.querySelector('.mobile-action-buttons').style.gap = '25px';
-                    
-                    const mobileTopBtns = document.querySelectorAll('.mobile-top-btn');
-                    mobileTopBtns.forEach(btn => {
-                        btn.style.width = '70px';
-                        btn.style.height = '70px';
-                        btn.style.fontSize = '2rem';
-                    });
-                    
-                    document.querySelector('.mobile-top-controls').style.top = '15px';
-                    document.querySelector('.mobile-top-controls').style.right = '15px';
-                    document.querySelector('.mobile-top-controls').style.gap = '15px';
-                }
-                // Adjust for very small screens
-                else if (screenWidth < 400 || screenHeight < 400) {
-                    document.querySelector('.mobile-controls').style.height = '180px';
-                    document.querySelector('.mobile-joystick-area').style.width = '100px';
-                    document.querySelector('.mobile-joystick-area').style.height = '100px';
-                    document.querySelector('.mobile-joystick-area').style.bottom = '20px';
-                    document.querySelector('.mobile-joystick-area').style.left = '15px';
-                    
-                    const mobileActionBtns = document.querySelectorAll('.mobile-action-btn');
-                    mobileActionBtns.forEach(btn => {
-                        btn.style.width = '65px';
-                        btn.style.height = '65px';
-                        btn.style.fontSize = '1.6rem';
-                    });
-                    
-                    document.querySelector('.mobile-action-buttons').style.bottom = '20px';
-                    document.querySelector('.mobile-action-buttons').style.right = '15px';
-                    document.querySelector('.mobile-action-buttons').style.gap = '15px';
-                    
-                    const mobileTopBtns = document.querySelectorAll('.mobile-top-btn');
-                    mobileTopBtns.forEach(btn => {
-                        btn.style.width = '45px';
-                        btn.style.height = '45px';
-                        btn.style.fontSize = '1.4rem';
-                    });
-                    
-                    document.querySelector('.mobile-top-controls').style.top = '5px';
-                    document.querySelector('.mobile-top-controls').style.right = '5px';
-                    document.querySelector('.mobile-top-controls').style.gap = '8px';
-                    
-                    document.querySelector('.header').style.minHeight = '40px';
-                    document.querySelector('.header').style.padding = '5px 8px';
-                    
-                    document.querySelector('.in-game-boss-health').style.top = '45px';
-                    document.querySelector('.in-game-boss-health').style.width = '200px';
-                }
-            } else {
-                // Show desktop controls, hide mobile controls
-                document.querySelector('.mobile-controls').style.display = 'none';
-                document.querySelector('.mobile-top-controls').style.display = 'none';
-                document.querySelector('.left-board').style.display = 'flex';
-                document.querySelector('.right-board').style.display = 'flex';
-            }
-            
-            return gameState.isMobile;
-        }
 
         // DOM Elements
         const gameCanvas = document.getElementById('gameCanvas');
@@ -1707,30 +1606,167 @@
         let gainNode = null;
         let audioInitialized = false;
 
-        // Initialize canvas size - Dynamic scaling
+        // Base game dimensions for scaling
+        const BASE_WIDTH = 1280;
+        const BASE_HEIGHT = 720;
+
+        // Initialize canvas size - Dynamic scaling with aspect ratio preservation
         function initCanvas() {
             const gameCenter = document.querySelector('.game-center');
             const containerWidth = gameCenter.clientWidth;
             const containerHeight = gameCenter.clientHeight;
             
-            // Set internal resolution but maintain aspect ratio
-            const targetAspectRatio = 16/9;
-            let canvasWidth = containerWidth;
-            let canvasHeight = containerWidth / targetAspectRatio;
+            // Calculate aspect ratios
+            const containerAspect = containerWidth / containerHeight;
+            const gameAspect = BASE_WIDTH / BASE_HEIGHT;
             
-            if (canvasHeight > containerHeight) {
+            let canvasWidth, canvasHeight;
+            
+            if (containerAspect > gameAspect) {
+                // Container is wider than game aspect ratio
                 canvasHeight = containerHeight;
-                canvasWidth = containerHeight * targetAspectRatio;
+                canvasWidth = canvasHeight * gameAspect;
+                gameState.canvasOffsetX = (containerWidth - canvasWidth) / 2;
+                gameState.canvasOffsetY = 0;
+            } else {
+                // Container is taller than game aspect ratio
+                canvasWidth = containerWidth;
+                canvasHeight = canvasWidth / gameAspect;
+                gameState.canvasOffsetX = 0;
+                gameState.canvasOffsetY = (containerHeight - canvasHeight) / 2;
             }
             
-            gameCanvas.width = canvasWidth;
-            gameCanvas.height = canvasHeight;
+            // Set canvas size
+            gameCanvas.style.width = canvasWidth + 'px';
+            gameCanvas.style.height = canvasHeight + 'px';
+            gameCanvas.style.position = 'absolute';
+            gameCanvas.style.left = gameState.canvasOffsetX + 'px';
+            gameCanvas.style.top = gameState.canvasOffsetY + 'px';
+            
+            // Set internal resolution (always use base resolution)
+            gameCanvas.width = BASE_WIDTH;
+            gameCanvas.height = BASE_HEIGHT;
+            
+            // Calculate scale factor
+            gameState.canvasScale = canvasWidth / BASE_WIDTH;
             
             // Center player initially
-            player.x = gameCanvas.width / 2;
-            player.y = gameCanvas.height - 100;
+            player.x = BASE_WIDTH / 2;
+            player.y = BASE_HEIGHT - 100;
             
             checkOrientation();
+        }
+
+        // Enhanced mobile detection with screen size check
+        function checkIfMobile() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            
+            // Better tablet detection
+            const isiPad = /iPad/.test(navigator.userAgent) || 
+                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            const isTablet = isiPad || 
+                           (screenWidth >= 600 && screenHeight >= 600 && isTouch) ||
+                           (screenWidth >= 768 && isTouch);
+            
+            // Calculate screen diagonal
+            const screenDiagonal = Math.sqrt(screenWidth * screenWidth + screenHeight * screenHeight) / 96;
+            
+            // Consider phones and tablets with screen diagonal less than 15 inches as mobile
+            const isSmallDevice = screenDiagonal < 15;
+            
+            // Tablet-specific detection
+            gameState.isTablet = isTablet && screenDiagonal >= 7 && screenDiagonal < 15;
+            
+            // Mobile if it's a mobile device, touch device, small screen, small device, OR tablet
+            gameState.isMobile = (isMobile || isTouch || isTablet || screenWidth <= 1024 || isSmallDevice);
+            
+            // Update UI based on device
+            if (gameState.isMobile) {
+                // Show mobile controls, hide desktop controls
+                document.querySelector('.mobile-controls').style.display = 'flex';
+                document.querySelector('.mobile-top-controls').style.display = 'flex';
+                document.querySelector('.left-board').style.display = 'none';
+                document.querySelector('.right-board').style.display = 'none';
+                
+                // Tablet-specific adjustments
+                if (gameState.isTablet) {
+                    // Make controls larger for tablets
+                    document.querySelector('.mobile-controls').style.height = '250px';
+                    document.querySelector('.mobile-joystick-area').style.width = '180px';
+                    document.querySelector('.mobile-joystick-area').style.height = '180px';
+                    document.querySelector('.mobile-joystick-area').style.bottom = '50px';
+                    document.querySelector('.mobile-joystick-area').style.left = '50px';
+                    
+                    const mobileActionBtns = document.querySelectorAll('.mobile-action-btn');
+                    mobileActionBtns.forEach(btn => {
+                        btn.style.width = '100px';
+                        btn.style.height = '100px';
+                        btn.style.fontSize = '2.2rem';
+                    });
+                    
+                    document.querySelector('.mobile-action-buttons').style.bottom = '50px';
+                    document.querySelector('.mobile-action-buttons').style.right = '50px';
+                    document.querySelector('.mobile-action-buttons').style.gap = '25px';
+                    
+                    const mobileTopBtns = document.querySelectorAll('.mobile-top-btn');
+                    mobileTopBtns.forEach(btn => {
+                        btn.style.width = '70px';
+                        btn.style.height = '70px';
+                        btn.style.fontSize = '2rem';
+                    });
+                    
+                    document.querySelector('.mobile-top-controls').style.top = '15px';
+                    document.querySelector('.mobile-top-controls').style.right = '15px';
+                    document.querySelector('.mobile-top-controls').style.gap = '15px';
+                }
+                // Adjust for very small screens
+                else if (screenWidth < 400 || screenHeight < 400) {
+                    document.querySelector('.mobile-controls').style.height = '180px';
+                    document.querySelector('.mobile-joystick-area').style.width = '100px';
+                    document.querySelector('.mobile-joystick-area').style.height = '100px';
+                    document.querySelector('.mobile-joystick-area').style.bottom = '20px';
+                    document.querySelector('.mobile-joystick-area').style.left = '15px';
+                    
+                    const mobileActionBtns = document.querySelectorAll('.mobile-action-btn');
+                    mobileActionBtns.forEach(btn => {
+                        btn.style.width = '65px';
+                        btn.style.height = '65px';
+                        btn.style.fontSize = '1.6rem';
+                    });
+                    
+                    document.querySelector('.mobile-action-buttons').style.bottom = '20px';
+                    document.querySelector('.mobile-action-buttons').style.right = '15px';
+                    document.querySelector('.mobile-action-buttons').style.gap = '15px';
+                    
+                    const mobileTopBtns = document.querySelectorAll('.mobile-top-btn');
+                    mobileTopBtns.forEach(btn => {
+                        btn.style.width = '45px';
+                        btn.style.height = '45px';
+                        btn.style.fontSize = '1.4rem';
+                    });
+                    
+                    document.querySelector('.mobile-top-controls').style.top = '5px';
+                    document.querySelector('.mobile-top-controls').style.right = '5px';
+                    document.querySelector('.mobile-top-controls').style.gap = '8px';
+                    
+                    document.querySelector('.header').style.minHeight = '40px';
+                    document.querySelector('.header').style.padding = '5px 8px';
+                    
+                    document.querySelector('.in-game-boss-health').style.top = '45px';
+                    document.querySelector('.in-game-boss-health').style.width = '200px';
+                }
+            } else {
+                // Show desktop controls, hide mobile controls
+                document.querySelector('.mobile-controls').style.display = 'none';
+                document.querySelector('.mobile-top-controls').style.display = 'none';
+                document.querySelector('.left-board').style.display = 'flex';
+                document.querySelector('.right-board').style.display = 'flex';
+            }
+            
+            return gameState.isMobile;
         }
 
         // Check device orientation
@@ -2055,9 +2091,9 @@
                     }
                 }
                 
-                // Boundary check
-                player.x = Math.max(player.radius, Math.min(gameCanvas.width - player.radius, player.x));
-                player.y = Math.max(player.radius, Math.min(gameCanvas.height - player.radius, player.y));
+                // Boundary check (using BASE dimensions)
+                player.x = Math.max(player.radius, Math.min(BASE_WIDTH - player.radius, player.x));
+                player.y = Math.max(player.radius, Math.min(BASE_HEIGHT - player.radius, player.y));
                 
                 // Update cooldowns
                 if (player.shootCooldown > 0) player.shootCooldown -= deltaTime;
@@ -2098,8 +2134,8 @@
                 // Spawn power-ups occasionally
                 powerUpSpawnTimer += deltaTime;
                 if (powerUpSpawnTimer >= 8 && Math.random() < 0.1) {
-                    const x = 50 + Math.random() * (gameCanvas.width - 100);
-                    const y = 50 + Math.random() * (gameCanvas.height - 100);
+                    const x = 50 + Math.random() * (BASE_WIDTH - 100);
+                    const y = 50 + Math.random() * (BASE_HEIGHT - 100);
                     powerUps.push(createPowerUp(x, y));
                     powerUpSpawnTimer = 0;
                 }
@@ -2189,8 +2225,8 @@
                     }
                     
                     // Remove enemies that go off screen
-                    if (enemy.x < -100 || enemy.x > gameCanvas.width + 100 || 
-                        enemy.y < -100 || enemy.y > gameCanvas.height + 100) {
+                    if (enemy.x < -100 || enemy.x > BASE_WIDTH + 100 || 
+                        enemy.y < -100 || enemy.y > BASE_HEIGHT + 100) {
                         enemies.splice(i, 1);
                     }
                 }
@@ -2286,7 +2322,7 @@
                     
                     // Keep boss on screen
                     if (boss.x < boss.radius) boss.x = boss.radius;
-                    if (boss.x > gameCanvas.width - boss.radius) boss.x = gameCanvas.width - boss.radius;
+                    if (boss.x > BASE_WIDTH - boss.radius) boss.x = BASE_WIDTH - boss.radius;
                     
                     // Boss attacks
                     bossAttackTimer += deltaTime;
@@ -2317,8 +2353,8 @@
                     proj.y += proj.direction.y * proj.speed * deltaTime * 60;
                     
                     // Remove projectiles that go off screen
-                    if (proj.x < -50 || proj.x > gameCanvas.width + 50 || 
-                        proj.y < -50 || proj.y > gameCanvas.height + 50) {
+                    if (proj.x < -50 || proj.x > BASE_WIDTH + 50 || 
+                        proj.y < -50 || proj.y > BASE_HEIGHT + 50) {
                         bossProjectiles.splice(i, 1);
                         continue;
                     }
@@ -2436,7 +2472,7 @@
             gameState.bossFight = true;
             
             boss = {
-                x: gameCanvas.width / 2,
+                x: BASE_WIDTH / 2,
                 y: 100,
                 radius: 35,
                 speed: 2,
@@ -2557,10 +2593,10 @@
             let x, y;
             
             switch(side) {
-                case 0: x = Math.random() * gameCanvas.width; y = -30; break;
-                case 1: x = gameCanvas.width + 30; y = Math.random() * gameCanvas.height; break;
-                case 2: x = Math.random() * gameCanvas.width; y = gameCanvas.height + 30; break;
-                case 3: x = -30; y = Math.random() * gameCanvas.height; break;
+                case 0: x = Math.random() * BASE_WIDTH; y = -30; break;
+                case 1: x = BASE_WIDTH + 30; y = Math.random() * BASE_HEIGHT; break;
+                case 2: x = Math.random() * BASE_WIDTH; y = BASE_HEIGHT + 30; break;
+                case 3: x = -30; y = Math.random() * BASE_HEIGHT; break;
             }
             
             const enemyTypes = [
@@ -3055,17 +3091,17 @@
             ctx.strokeStyle = 'rgba(0, 100, 255, 0.1)';
             ctx.lineWidth = 1;
             
-            for (let x = -offsetX; x < gameCanvas.width; x += gridSize) {
+            for (let x = -offsetX; x < BASE_WIDTH; x += gridSize) {
                 ctx.beginPath();
                 ctx.moveTo(x, 0);
-                ctx.lineTo(x, gameCanvas.height);
+                ctx.lineTo(x, BASE_HEIGHT);
                 ctx.stroke();
             }
             
-            for (let y = -offsetY; y < gameCanvas.height; y += gridSize) {
+            for (let y = -offsetY; y < BASE_HEIGHT; y += gridSize) {
                 ctx.beginPath();
                 ctx.moveTo(0, y);
-                ctx.lineTo(gameCanvas.width, y);
+                ctx.lineTo(BASE_WIDTH, y);
                 ctx.stroke();
             }
         }
@@ -3085,12 +3121,12 @@
                 const remaining = gameState.enemiesToNextBoss - gameState.enemiesDefeatedThisLevel;
                 ctx.fillStyle = '#ffaa00';
                 ctx.font = '18px Arial';
-                ctx.fillText(`NEXT BOSS: ${Math.max(0, remaining)}`, gameCanvas.width - 200, 20);
+                ctx.fillText(`NEXT BOSS: ${Math.max(0, remaining)}`, BASE_WIDTH - 200, 20);
             }
         }
 
         function drawBossSpawnEffect() {
-            const centerX = gameCanvas.width / 2;
+            const centerX = BASE_WIDTH / 2;
             const centerY = 100;
             const progress = bossSpawnEffectTimer / 2;
             
@@ -3105,11 +3141,11 @@
             ctx.font = 'bold 40px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('BOSS INCOMING!', centerX, gameCanvas.height / 2);
+            ctx.fillText('BOSS INCOMING!', centerX, BASE_HEIGHT / 2);
             
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 60px Arial';
-            ctx.fillText(Math.ceil(2 - bossSpawnEffectTimer), centerX, gameCanvas.height / 2 + 70);
+            ctx.fillText(Math.ceil(2 - bossSpawnEffectTimer), centerX, BASE_HEIGHT / 2 + 70);
         }
 
         // Render everything
@@ -3117,7 +3153,7 @@
             if (gameState.paused) return;
             
             try {
-                ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+                ctx.clearRect(0, 0, BASE_WIDTH, BASE_HEIGHT);
                 
                 drawBackground();
                 
@@ -3191,8 +3227,8 @@
             gameState.joystickTouching = false;
             gameState.joystickActive = false;
             
-            player.x = gameCanvas.width / 2;
-            player.y = gameCanvas.height - 100;
+            player.x = BASE_WIDTH / 2;
+            player.y = BASE_HEIGHT - 100;
             player.health = 100 * gameState.upgrades.health;
             player.maxHealth = 100 * gameState.upgrades.health;
             player.shootCooldown = 0;
