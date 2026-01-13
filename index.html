@@ -34,13 +34,14 @@
             -webkit-overflow-scrolling: touch;
             height: 100vh;
             width: 100vw;
+            position: fixed;
         }
         
         #gameContainer {
             width: 100%;
             max-width: 1400px;
-            height: 100vh;
-            max-height: 1000px;
+            height: 100%;
+            max-height: 100vh;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -48,6 +49,7 @@
             box-shadow: 0 0 50px rgba(0, 150, 255, 0.3);
             border-radius: 10px;
             overflow: hidden;
+            aspect-ratio: 16/9;
         }
         
         /* Header - spans full width */
@@ -65,7 +67,7 @@
         }
         
         .logo {
-            font-size: 1.3rem;
+            font-size: clamp(1rem, 2vw, 1.3rem);
             font-weight: 800;
             background: linear-gradient(90deg, #00ccff, #0088ff);
             -webkit-background-clip: text;
@@ -96,13 +98,13 @@
         }
         
         .score-label {
-            font-size: 0.7rem;
+            font-size: clamp(0.6rem, 1vw, 0.7rem);
             color: #aaddff;
             margin-bottom: 3px;
         }
         
         .score-value {
-            font-size: 1.1rem;
+            font-size: clamp(0.9rem, 1.2vw, 1.1rem);
             font-weight: 700;
             color: #00ffaa;
         }
@@ -113,6 +115,7 @@
             flex: 1;
             width: 100%;
             position: relative;
+            min-height: 0;
         }
         
         /* Left Board - for joystick (DESKTOP ONLY) */
@@ -132,6 +135,9 @@
             flex: 1;
             position: relative;
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         #gameCanvas {
@@ -140,6 +146,13 @@
             background: radial-gradient(circle at center, #0f0f25 0%, #080815 100%);
             cursor: crosshair;
             touch-action: none;
+            object-fit: contain;
+        }
+        
+        .canvas-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
         }
         
         /* Right Board - for action buttons (DESKTOP ONLY) */
@@ -387,10 +400,10 @@
         .mobile-controls {
             display: none;
             position: absolute;
-            bottom: 20px;
+            bottom: 0;
             left: 0;
             right: 0;
-            height: 200px;
+            height: 220px;
             z-index: 50;
             pointer-events: none;
         }
@@ -499,7 +512,7 @@
         }
         
         .screen h1 {
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 5vw, 2.5rem);
             margin-bottom: 10px;
             background: linear-gradient(90deg, #00ccff, #ff00cc);
             -webkit-background-clip: text;
@@ -509,13 +522,13 @@
         }
         
         .screen h2 {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
             margin-bottom: 20px;
             color: #00ffaa;
         }
         
         .screen p {
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 2vw, 1rem);
             max-width: 600px;
             margin-bottom: 20px;
             color: #aaddff;
@@ -524,7 +537,7 @@
         
         .btn {
             padding: 12px 30px;
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 2vw, 1.1rem);
             font-weight: 700;
             background: linear-gradient(90deg, #0088ff, #00ccff);
             color: white;
@@ -534,7 +547,7 @@
             margin: 8px;
             transition: all 0.3s;
             box-shadow: 0 5px 20px rgba(0, 136, 255, 0.5);
-            width: 200px;
+            width: min(200px, 90%);
             max-width: 90%;
         }
         
@@ -557,7 +570,7 @@
             display: flex;
             justify-content: space-between;
             margin: 8px 0;
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 2vw, 1rem);
         }
         
         .store {
@@ -591,17 +604,17 @@
         .upgrade-info h3 {
             color: #00ffaa;
             margin-bottom: 5px;
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 2vw, 1rem);
         }
         
         .upgrade-info p {
-            font-size: 0.8rem;
+            font-size: clamp(0.7rem, 1.5vw, 0.8rem);
             margin: 0;
             color: #aaddff;
         }
         
         .upgrade-cost {
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 2vw, 1.1rem);
             font-weight: 700;
             color: #ffcc00;
             white-space: nowrap;
@@ -645,26 +658,12 @@
         
         /* Force landscape for mobile */
         @media (orientation: portrait) and (max-width: 768px) {
-            body {
-                overflow: hidden;
+            #orientationWarning {
+                display: flex;
             }
             
             #gameContainer {
-                transform: rotate(90deg);
-                transform-origin: center center;
-                width: 100vh;
-                height: 100vw;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) rotate(90deg);
-                max-width: none;
-                max-height: none;
-                border-radius: 0;
-            }
-            
-            .mobile-controls {
-                bottom: 50px;
+                display: none;
             }
         }
         
@@ -705,11 +704,15 @@
         /* For mobile devices - hide side panels, show mobile overlay */
         @media (max-width: 768px) {
             .left-board, .right-board {
-                display: none !important; /* FORCE HIDE on mobile */
+                display: none;
             }
             
-            .mobile-controls, .mobile-top-controls {
-                display: flex !important; /* FORCE SHOW on mobile */
+            .mobile-controls {
+                display: flex;
+            }
+            
+            .mobile-top-controls {
+                display: flex;
             }
             
             .header {
@@ -736,85 +739,276 @@
             
             .in-game-boss-health {
                 top: 60px;
-                width: 250px;
+                width: min(250px, 80%);
             }
             
-            /* Landscape optimization */
-            @media (orientation: landscape) {
-                .mobile-controls {
-                    height: 150px;
-                    bottom: 10px;
-                }
-                
-                .mobile-joystick-area {
-                    bottom: 20px;
-                    left: 20px;
-                    width: 140px;
-                    height: 140px;
-                }
-                
-                .mobile-action-buttons {
-                    bottom: 20px;
-                    right: 20px;
-                    gap: 15px;
-                }
-                
-                .mobile-action-btn {
-                    width: 80px;
-                    height: 80px;
-                    font-size: 1.8rem;
-                }
-                
-                .mobile-top-controls {
-                    top: 5px;
-                    right: 5px;
-                }
-                
-                .mobile-top-btn {
-                    width: 65px;
-                    height: 65px;
-                    font-size: 1.6rem;
-                }
-                
-                .header {
-                    min-height: 40px;
-                    padding: 5px 8px;
-                }
-                
-                .in-game-boss-health {
-                    top: 45px;
-                    width: 200px;
-                }
+            .mobile-joystick-area {
+                width: clamp(120px, 20vw, 160px);
+                height: clamp(120px, 20vw, 160px);
+                bottom: clamp(20px, 5vh, 40px);
+                left: clamp(20px, 5vw, 40px);
+            }
+            
+            .mobile-action-buttons {
+                bottom: clamp(20px, 5vh, 40px);
+                right: clamp(20px, 5vw, 40px);
+                gap: clamp(10px, 2vh, 20px);
+            }
+            
+            .mobile-action-btn {
+                width: clamp(70px, 15vw, 90px);
+                height: clamp(70px, 15vw, 90px);
+                font-size: clamp(1.5rem, 4vw, 2rem);
+            }
+            
+            .mobile-top-btn {
+                width: clamp(55px, 12vw, 75px);
+                height: clamp(55px, 12vw, 75px);
+                font-size: clamp(1.5rem, 4vw, 1.8rem);
             }
         }
         
-        /* Very small screens */
-        @media (max-height: 600px) {
+        /* ============= PROFESSIONAL FIXES FOR SMALL SCREENS ============= */
+        
+        /* Small phones (6-7 inch) */
+        @media (max-width: 400px) and (orientation: landscape) {
+            .mobile-top-controls {
+                top: 5px;
+                right: 5px;
+                gap: 8px;
+            }
+            
+            .mobile-top-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.4rem;
+            }
+            
+            .mobile-controls {
+                height: 180px;
+            }
+            
+            .mobile-joystick-area {
+                width: 100px;
+                height: 100px;
+                bottom: 20px;
+                left: 15px;
+            }
+            
+            .joystick-base {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .joystick-handle {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .mobile-action-buttons {
+                bottom: 20px;
+                right: 15px;
+                gap: 15px;
+            }
+            
+            .mobile-action-btn {
+                width: 65px;
+                height: 65px;
+                font-size: 1.6rem;
+            }
+            
+            .header {
+                min-height: 40px;
+                padding: 5px 8px;
+            }
+            
+            .logo {
+                font-size: 0.9rem;
+            }
+            
+            .score-box {
+                min-width: 55px;
+                padding: 3px 5px;
+            }
+            
+            .score-label {
+                font-size: 0.55rem;
+            }
+            
+            .score-value {
+                font-size: 0.8rem;
+            }
+            
+            .in-game-boss-health {
+                top: 45px;
+                width: 200px;
+            }
+        }
+        
+        /* Very small screens - Height-based adjustments */
+        @media (max-height: 400px) and (orientation: landscape) {
             .mobile-controls {
                 height: 150px;
             }
             
             .mobile-joystick-area {
-                width: 140px;
-                height: 140px;
-                bottom: 20px;
-                left: 20px;
+                width: 90px;
+                height: 90px;
+                bottom: 15px;
+                left: 10px;
+            }
+            
+            .joystick-base {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .joystick-handle {
+                width: 35px;
+                height: 35px;
             }
             
             .mobile-action-buttons {
-                bottom: 20px;
-                right: 20px;
+                bottom: 15px;
+                right: 10px;
+                gap: 12px;
             }
             
             .mobile-action-btn {
-                width: 80px;
-                height: 80px;
-                font-size: 1.8rem;
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .mobile-top-controls {
+                top: 5px;
+                right: 5px;
+                gap: 6px;
             }
             
             .mobile-top-btn {
-                width: 65px;
-                height: 65px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.3rem;
+            }
+            
+            .header {
+                min-height: 35px;
+                padding: 3px 6px;
+            }
+            
+            .score-box {
+                min-width: 50px;
+                padding: 2px 4px;
+            }
+            
+            .score-label {
+                font-size: 0.5rem;
+            }
+            
+            .score-value {
+                font-size: 0.7rem;
+            }
+            
+            .in-game-boss-health {
+                top: 40px;
+                width: 180px;
+            }
+        }
+        
+        /* Medium screens - Better spacing */
+        @media (min-width: 401px) and (max-width: 500px) and (orientation: landscape) {
+            .mobile-top-controls {
+                top: 8px;
+                right: 8px;
+                gap: 10px;
+            }
+            
+            .mobile-top-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .mobile-controls {
+                height: 190px;
+            }
+            
+            .mobile-joystick-area {
+                width: 110px;
+                height: 110px;
+                bottom: 25px;
+                left: 20px;
+            }
+            
+            .joystick-base {
+                width: 85px;
+                height: 85px;
+            }
+            
+            .joystick-handle {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .mobile-action-buttons {
+                bottom: 25px;
+                right: 20px;
+                gap: 18px;
+            }
+            
+            .mobile-action-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 1.7rem;
+            }
+        }
+        
+        /* Fix for 6-7 inch phones in portrait (though game prefers landscape) */
+        @media (max-width: 400px) and (orientation: portrait) {
+            .mobile-top-controls {
+                top: 10px;
+                right: 10px;
+                gap: 10px;
+            }
+            
+            .mobile-top-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .mobile-controls {
+                height: 200px;
+            }
+            
+            .mobile-joystick-area {
+                width: 120px;
+                height: 120px;
+                bottom: 30px;
+                left: 20px;
+            }
+            
+            .joystick-base {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .joystick-handle {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .mobile-action-buttons {
+                bottom: 30px;
+                right: 20px;
+                gap: 20px;
+            }
+            
+            .mobile-action-btn {
+                width: 75px;
+                height: 75px;
+                font-size: 1.8rem;
             }
         }
         
@@ -880,6 +1074,39 @@
             display: none;
             box-shadow: 0 4px 15px rgba(255, 51, 0, 0.5);
         }
+        
+        .controls-explanation {
+            background: rgba(0, 40, 80, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .controls-explanation p {
+            margin: 5px 0;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+        
+        /* Safe area insets for notched phones */
+        @supports (padding: max(0px)) {
+            .mobile-top-controls {
+                right: max(10px, env(safe-area-inset-right));
+                top: max(10px, env(safe-area-inset-top));
+            }
+            
+            .mobile-joystick-area {
+                left: max(20px, env(safe-area-inset-left));
+                bottom: max(20px, env(safe-area-inset-bottom));
+            }
+            
+            .mobile-action-buttons {
+                right: max(20px, env(safe-area-inset-right));
+                bottom: max(20px, env(safe-area-inset-bottom));
+            }
+        }
     </style>
 </head>
 <body>
@@ -932,7 +1159,9 @@
             
             <!-- Center Game Canvas -->
             <div class="game-center">
-                <canvas id="gameCanvas"></canvas>
+                <div class="canvas-container">
+                    <canvas id="gameCanvas"></canvas>
+                </div>
                 
                 <!-- In-game Boss Health Bar -->
                 <div class="in-game-boss-health">
@@ -1096,19 +1325,27 @@
         <!-- Instructions Screen -->
         <div id="instructionsScreen" class="screen" style="display: none;">
             <h1>HOW TO PLAY</h1>
-            <div class="game-over-stats">
-                <div style="flex-direction: column; align-items: flex-start;">
-                    <p><strong>Controls:</strong></p>
-                    <p><i class="fas fa-arrows-alt" style="color: #00aaff;"></i> <strong>Move:</strong> Drag the joystick to move your fighter</p>
-                    <p><i class="fas fa-crosshairs" style="color: #ff3300;"></i> <strong>Shoot:</strong> Red button fires rapid bullets</p>
-                    <p><i class="fas fa-fire" style="color: #ffaa00;"></i> <strong>Fire Attack:</strong> Yellow button for area damage (cooldown: 6s)</p>
-                    <p><i class="fas fa-bolt" style="color: #00cc88;"></i> <strong>Dash:</strong> Green button for quick dash (cooldown: 3s)</p>
-                    <p><i class="fas fa-heart" style="color: #ff0066;"></i> <strong>Health:</strong> Avoid enemies and collect health orbs</p>
-                    <p><i class="fas fa-crown" style="color: #ffcc00;"></i> <strong>Boss Fights:</strong> Defeat the boss at the end of each level</p>
-                    <p><i class="fas fa-running" style="color: #00ccff;"></i> <strong>Enemy AI:</strong> Enemies run away when you shoot near them!</p>
-                    <p><i class="fas fa-pause" style="color: #ffaa00;"></i> <strong>Pause:</strong> Tap the pause button during gameplay to pause</p>
-                </div>
+            <div class="controls-explanation">
+                <p><strong style="color:#00aaff;">MOBILE CONTROLS:</strong></p>
+                <p>• <strong>Move:</strong> Drag the joystick to move your fighter</p>
+                <p>• <strong>Shoot:</strong> Red button fires rapid bullets</p>
+                <p>• <strong>Fire Attack:</strong> Yellow button for area damage (cooldown: 6s)</p>
+                <p>• <strong>Dash:</strong> Green button for quick dash (cooldown: 3s)</p>
+                
+                <p><strong style="color:#00aaff; margin-top:15px; display:block;">PC CONTROLS:</strong></p>
+                <p>• <strong>Move:</strong> Arrow Keys ONLY (↑ ↓ ← →)</p>
+                <p>• <strong>Shoot:</strong> X key, SPACEBAR, or Left Click</p>
+                <p>• <strong>Special Attack:</strong> S key (cooldown: 6s)</p>
+                <p>• <strong>Dash:</strong> D key (cooldown: 3s)</p>
+                <p>• <strong>Pause:</strong> P key or ESC</p>
+                
+                <p><strong style="color:#00aaff; margin-top:15px; display:block;">GAMEPLAY:</strong></p>
+                <p>• <strong>Health:</strong> Avoid enemies and collect health orbs</p>
+                <p>• <strong>Boss Fights:</strong> Defeat the boss at the end of each level</p>
+                <p>• <strong>Enemy AI:</strong> Enemies run away when you shoot near them!</p>
+                <p>• <strong>Upgrades:</strong> Use points to make your fighter stronger</p>
             </div>
+            
             <button id="backFromInstructionsBtn" class="btn">BACK TO MENU</button>
         </div>
         
@@ -1145,7 +1382,7 @@
                 <h2>Please Rotate Your Device</h2>
                 <p>For the best gaming experience, please play in landscape mode.</p>
                 <p>If you're on a phone, rotate it sideways.</p>
-                <button id="ignoreOrientationBtn" class="btn" style="margin-top: 20px;">OK, Continue</button>
+                <button id="ignoreOrientationBtn" class="btn" style="margin-top: 20px;">Play Anyway (Not Recommended)</button>
             </div>
         </div>
     </div>
@@ -1201,7 +1438,7 @@
         }
     </script>
 
-    <!-- Game Script (Original Game Code - Unchanged) -->
+    <!-- Game Script (Updated for Responsiveness) -->
     <script>
         // Game state
         const gameState = {
@@ -1235,31 +1472,70 @@
             joystickCurrentY: 0
         };
 
-        // Check if mobile - IMPROVED VERSION
+        // Enhanced mobile detection with screen size check
         function checkIfMobile() {
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
             const isSmallScreen = window.innerWidth <= 768;
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            const screenDiagonal = Math.sqrt(screenWidth * screenWidth + screenHeight * screenHeight) / 96; // Convert to inches
             
-            gameState.isMobile = isMobile || isTouch || isSmallScreen;
+            // Consider phones with screen diagonal less than 8 inches as mobile
+            const isSmallDevice = screenDiagonal < 8;
             
-            // Update display based on device - THIS IS CRITICAL!
+            gameState.isMobile = (isMobile || isTouch || isSmallScreen || isSmallDevice) && screenWidth < 1024;
+            
+            // Update UI based on device
             if (gameState.isMobile) {
-                // HIDE desktop controls
-                document.querySelectorAll('.left-board, .right-board').forEach(el => {
-                    el.style.display = 'none';
-                });
-                // SHOW mobile controls
+                // Show mobile controls, hide desktop controls
                 document.querySelector('.mobile-controls').style.display = 'flex';
                 document.querySelector('.mobile-top-controls').style.display = 'flex';
+                document.querySelector('.left-board').style.display = 'none';
+                document.querySelector('.right-board').style.display = 'none';
+                
+                // Adjust for very small screens
+                if (screenWidth < 400 || screenHeight < 400) {
+                    document.querySelector('.mobile-controls').style.height = '180px';
+                    document.querySelector('.mobile-joystick-area').style.width = '100px';
+                    document.querySelector('.mobile-joystick-area').style.height = '100px';
+                    document.querySelector('.mobile-joystick-area').style.bottom = '20px';
+                    document.querySelector('.mobile-joystick-area').style.left = '15px';
+                    
+                    const mobileActionBtns = document.querySelectorAll('.mobile-action-btn');
+                    mobileActionBtns.forEach(btn => {
+                        btn.style.width = '65px';
+                        btn.style.height = '65px';
+                        btn.style.fontSize = '1.6rem';
+                    });
+                    
+                    document.querySelector('.mobile-action-buttons').style.bottom = '20px';
+                    document.querySelector('.mobile-action-buttons').style.right = '15px';
+                    document.querySelector('.mobile-action-buttons').style.gap = '15px';
+                    
+                    const mobileTopBtns = document.querySelectorAll('.mobile-top-btn');
+                    mobileTopBtns.forEach(btn => {
+                        btn.style.width = '45px';
+                        btn.style.height = '45px';
+                        btn.style.fontSize = '1.4rem';
+                    });
+                    
+                    document.querySelector('.mobile-top-controls').style.top = '5px';
+                    document.querySelector('.mobile-top-controls').style.right = '5px';
+                    document.querySelector('.mobile-top-controls').style.gap = '8px';
+                    
+                    document.querySelector('.header').style.minHeight = '40px';
+                    document.querySelector('.header').style.padding = '5px 8px';
+                    
+                    document.querySelector('.in-game-boss-health').style.top = '45px';
+                    document.querySelector('.in-game-boss-health').style.width = '200px';
+                }
             } else {
-                // SHOW desktop controls
-                document.querySelectorAll('.left-board, .right-board').forEach(el => {
-                    el.style.display = 'flex';
-                });
-                // HIDE mobile controls
+                // Show desktop controls, hide mobile controls
                 document.querySelector('.mobile-controls').style.display = 'none';
                 document.querySelector('.mobile-top-controls').style.display = 'none';
+                document.querySelector('.left-board').style.display = 'flex';
+                document.querySelector('.right-board').style.display = 'flex';
             }
             
             return gameState.isMobile;
@@ -1340,7 +1616,7 @@
         // Upgrade store
         const upgradeItems = document.querySelectorAll('.upgrade-item');
 
-        // Game objects - UPDATED player size for better proportions
+        // Game objects
         const player = {
             x: 0,
             y: 0,
@@ -1386,13 +1662,24 @@
         let gainNode = null;
         let audioInitialized = false;
 
-        // Initialize canvas size - Set to 1280x720 internally
+        // Initialize canvas size - Dynamic scaling
         function initCanvas() {
             const gameCenter = document.querySelector('.game-center');
+            const containerWidth = gameCenter.clientWidth;
+            const containerHeight = gameCenter.clientHeight;
             
-            // Set internal resolution to 1280x720
-            gameCanvas.width = 1280;
-            gameCanvas.height = 720;
+            // Set internal resolution but maintain aspect ratio
+            const targetAspectRatio = 16/9;
+            let canvasWidth = containerWidth;
+            let canvasHeight = containerWidth / targetAspectRatio;
+            
+            if (canvasHeight > containerHeight) {
+                canvasHeight = containerHeight;
+                canvasWidth = containerHeight * targetAspectRatio;
+            }
+            
+            gameCanvas.width = canvasWidth;
+            gameCanvas.height = canvasHeight;
             
             // Center player initially
             player.x = gameCanvas.width / 2;
@@ -1408,8 +1695,10 @@
             
             if (isMobile && isPortrait && gameState.screen === 'playing') {
                 orientationWarning.style.display = 'flex';
+                document.getElementById('gameContainer').style.display = 'none';
             } else {
                 orientationWarning.style.display = 'none';
+                document.getElementById('gameContainer').style.display = 'flex';
             }
         }
 
@@ -1466,40 +1755,17 @@
             } catch (e) {}
         }
 
-        // Initialize joystick - FIXED for mobile/desktop
+        // Initialize joystick
         function initJoystick(joystickBaseElement, joystickHandleElement, isMobile = false) {
             if (!joystickBaseElement || !joystickHandleElement) return;
             
-            let joystickArea = joystickBaseElement.parentElement;
-            
-            // For mobile, use the mobile joystick area
-            if (isMobile) {
-                const mobileArea = document.querySelector('.mobile-joystick-area');
-                if (mobileArea) {
-                    joystickArea = mobileArea;
-                }
-            }
+            let joystickArea = isMobile ? 
+                document.querySelector('.mobile-joystick-area') : 
+                document.querySelector('.left-board .joystick-area');
             
             if (!joystickArea) return;
             
-            // Make sure joystick area is properly set up for touch
-            if (isMobile) {
-                joystickArea.style.touchAction = 'none';
-                joystickArea.style.pointerEvents = 'auto';
-                
-                if (joystickBaseElement) {
-                    joystickBaseElement.style.touchAction = 'none';
-                    joystickBaseElement.style.pointerEvents = 'auto';
-                }
-                
-                if (joystickHandleElement) {
-                    joystickHandleElement.style.touchAction = 'none';
-                    joystickHandleElement.style.pointerEvents = 'auto';
-                }
-            }
-            
             function getJoystickBaseRect() {
-                // Get the position of the joystick area
                 const rect = joystickArea.getBoundingClientRect();
                 return {
                     left: rect.left,
@@ -1576,11 +1842,8 @@
             
             // Touch events for mobile
             if (isMobile) {
-                // Add touch events to the joystick area
                 joystickArea.addEventListener('touchstart', function(e) {
                     e.preventDefault();
-                    e.stopPropagation();
-                    
                     if (e.touches.length > 0) {
                         const touch = e.touches[0];
                         startJoystick(touch.clientX, touch.clientY);
@@ -1589,8 +1852,6 @@
                 
                 joystickArea.addEventListener('touchmove', function(e) {
                     e.preventDefault();
-                    e.stopPropagation();
-                    
                     if (gameState.joystickTouching && e.touches.length > 0) {
                         const touch = e.touches[0];
                         moveJoystick(touch.clientX, touch.clientY);
@@ -1606,19 +1867,6 @@
                     e.preventDefault();
                     endJoystick();
                 }, { passive: false });
-                
-                // Also add touch events to the handle for better responsiveness
-                if (joystickHandleElement) {
-                    joystickHandleElement.addEventListener('touchstart', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        if (e.touches.length > 0) {
-                            const touch = e.touches[0];
-                            startJoystick(touch.clientX, touch.clientY);
-                        }
-                    }, { passive: false });
-                }
             } else {
                 // Mouse events for desktop
                 joystickArea.addEventListener('mousedown', (e) => {
@@ -2946,7 +3194,7 @@
 
         // Initialize game
         function init() {
-            checkIfMobile(); // This will show/hide controls based on device
+            checkIfMobile();
             initCanvas();
             
             const initAudioOnInteraction = () => {
@@ -2960,7 +3208,7 @@
             
             highScoreElement.textContent = gameState.highScore;
             
-            // Initialize joysticks - ONLY ONE based on device
+            // Initialize joysticks based on device
             if (gameState.isMobile) {
                 // Initialize MOBILE joystick only
                 if (mobileJoystickBase && mobileJoystickHandle) {
@@ -3024,6 +3272,7 @@
             
             ignoreOrientationBtn.addEventListener('click', () => {
                 orientationWarning.style.display = 'none';
+                document.getElementById('gameContainer').style.display = 'flex';
             });
             
             // Pause button event listeners - BOTH desktop and mobile
@@ -3073,6 +3322,13 @@
                 shootBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     if (gameState.screen === 'playing' && !gameState.paused) {
+                        shoot();
+                    }
+                });
+                
+                // Add click listener for PC
+                gameCanvas.addEventListener('click', (e) => {
+                    if (gameState.screen === 'playing' && !gameState.paused && !gameState.isMobile) {
                         shoot();
                     }
                 });
@@ -3160,56 +3416,76 @@
             }
             
             // Keyboard controls for desktop
+            const keysPressed = {};
+            
             document.addEventListener('keydown', (e) => {
                 if (gameState.screen !== 'playing' || gameState.paused) return;
                 
-                switch(e.key) {
-                    case 'ArrowLeft':
-                        joystickVector.x = -1;
-                        break;
-                    case 'ArrowRight':
-                        joystickVector.x = 1;
-                        break;
-                    case 'ArrowUp':
-                        joystickVector.y = -1;
-                        break;
-                    case 'ArrowDown':
-                        joystickVector.y = 1;
-                        break;
-                    case ' ':
-                        shoot();
-                        break;
-                    case 's':
-                    case 'S':
-                        specialAttack();
-                        break;
-                    case 'd':
-                    case 'D':
-                        dash();
-                        break;
-                    case 'p':
-                    case 'P':
-                    case 'Escape':
-                        if (gameState.screen === 'playing') {
-                            if (gameState.paused) {
-                                resumeGame();
-                            } else {
-                                pauseGame();
-                            }
+                keysPressed[e.key.toLowerCase()] = true;
+                
+                // Movement keys - ONLY ARROW KEYS
+                if (e.key === 'ArrowLeft') {
+                    joystickVector.x = -1;
+                } else if (e.key === 'ArrowRight') {
+                    joystickVector.x = 1;
+                } else if (e.key === 'ArrowUp') {
+                    joystickVector.y = -1;
+                } else if (e.key === 'ArrowDown') {
+                    joystickVector.y = 1;
+                }
+                
+                // Action keys
+                if (e.key === 'x' || e.key === 'X' || e.key === ' ') {
+                    shoot();
+                }
+                
+                // Special attack (S key)
+                if (e.key === 's' || e.key === 'S') {
+                    specialAttack();
+                }
+                
+                // Dash (D key)
+                if (e.key === 'd' || e.key === 'D') {
+                    dash();
+                }
+                
+                // Pause
+                if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') {
+                    if (gameState.screen === 'playing') {
+                        if (gameState.paused) {
+                            resumeGame();
+                        } else {
+                            pauseGame();
                         }
-                        break;
+                    }
                 }
             });
             
             document.addEventListener('keyup', (e) => {
-                switch(e.key) {
-                    case 'ArrowLeft':
-                    case 'ArrowRight':
-                        joystickVector.x = 0;
+                const key = e.key.toLowerCase();
+                delete keysPressed[key];
+                
+                // Reset movement for arrow keys ONLY
+                switch(key) {
+                    case 'arrowleft':
+                        if (!keysPressed['arrowright']) {
+                            joystickVector.x = 0;
+                        }
                         break;
-                    case 'ArrowUp':
-                    case 'ArrowDown':
-                        joystickVector.y = 0;
+                    case 'arrowright':
+                        if (!keysPressed['arrowleft']) {
+                            joystickVector.x = 0;
+                        }
+                        break;
+                    case 'arrowup':
+                        if (!keysPressed['arrowdown']) {
+                            joystickVector.y = 0;
+                        }
+                        break;
+                    case 'arrowdown':
+                        if (!keysPressed['arrowup']) {
+                            joystickVector.y = 0;
+                        }
                         break;
                 }
             });
@@ -3245,17 +3521,20 @@
             });
             
             // Handle window resize and orientation change
-            window.addEventListener('resize', () => {
-                checkIfMobile(); // Re-check and update controls display
+            function handleResize() {
+                checkIfMobile();
                 initCanvas();
-            });
+                checkOrientation();
+                
+                // Re-initialize joystick for mobile if needed
+                if (gameState.isMobile && mobileJoystickBase && mobileJoystickHandle) {
+                    initJoystick(mobileJoystickBase, mobileJoystickHandle, true);
+                }
+            }
             
+            window.addEventListener('resize', handleResize);
             window.addEventListener('orientationchange', () => {
-                setTimeout(() => {
-                    checkIfMobile(); // Re-check and update controls display
-                    initCanvas();
-                    checkOrientation();
-                }, 300);
+                setTimeout(handleResize, 300);
             });
             
             // Start game loop
